@@ -599,7 +599,7 @@ class FittsTestUI extends UIClass {
 
         // a bit more left to do...
         // === YOUR CODE HERE ===
-        this.theTarget.visible = false;
+        this.theTarget.visible = true;
 
         break;
       case "begin_trial":
@@ -792,12 +792,13 @@ class Target extends ScreenObject {
   // Draw the object as a filled and outlined circle
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
+    console.log("here");
     ctx.strokeStyle = "black";
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this._x, this._y, this.radius, 0, 0, false);
-    ctx.stroke();
+    ctx.arc(this._x, this._y, this.radius, 0, 2 * Math.PI, false);
     ctx.fill();
+    ctx.stroke();
   }
 
   // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
@@ -823,6 +824,7 @@ class Target extends ScreenObject {
   // and starting a new one.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
+    console.log("clicked!");
     if (this.parentUI.currentState === "in_trial") {
       this.parentUI.newTrial();
       return true;
@@ -886,14 +888,21 @@ class Reticle extends Target {
       this.centerY,
       Reticle.RETICLE_INNER_DIAM / 2,
       0,
-      0,
+      2 * Math.PI,
       false
     );
     ctx.stroke();
     ctx.fill();
     //outer
     ctx.beginPath();
-    ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_DIAM / 2, 0, 0, false);
+    ctx.arc(
+      this.centerX,
+      this.centerY,
+      Reticle.RETICLE_DIAM / 2,
+      0,
+      2 * Math.PI,
+      false
+    );
     ctx.stroke();
     ctx.fill();
 
