@@ -609,10 +609,14 @@ class FittsTestUI extends UIClass {
         this.theTarget.visible = false;
       case "in_trial":
         // === YOUR CODE HERE ===
+        this.theReticle.visible = false;
+        this.theTarget.visible = true;
 
         break;
       case "ended":
         // === YOUR CODE HERE ===
+        this.theReticle.visible = false;
+        this.theTarget.visible = false;
 
         // produce a dump of our data records on the console
         this.presentData();
