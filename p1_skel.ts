@@ -610,11 +610,13 @@ class FittsTestUI extends UIClass {
         this.theBackground.msg3 = "";
         this.theReticle.visible = true;
         this.theTarget.visible = false;
+        console.log("begin_trial");
+        break;
       case "in_trial":
         // === YOUR CODE HERE ===
         this.theReticle.visible = false;
         this.theTarget.visible = true;
-
+        console.log("in_trial");
         break;
       case "ended":
         // === YOUR CODE HERE ===
@@ -659,9 +661,11 @@ class FittsTestUI extends UIClass {
       } = pickLocationsAndSize(this.canvas.width, this.canvas.height);
 
       // === YOUR CODE HERE ===
-      this.configure("begin_trial");
+      this.theTarget.newGeom(targX, targY, targDiam);
+      this.theReticle.newGeom(retX, retY);
       this.needsRedraw = true;
       this.redraw();
+      this.configure("begin_trial");
     }
   }
 
@@ -829,8 +833,11 @@ class Target extends ScreenObject {
   // and starting a new one.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    console.log("clicked!");
-    if (this.parentUI.currentState === "in_trial") {
+    if (
+      this.visible &&
+      this.pickedBy(ptX, ptY) &&
+      this.parentUI.currentState === "in_trial"
+    ) {
       this.parentUI.newTrial();
       return true;
     } else {
@@ -884,21 +891,6 @@ class Reticle extends Target {
     // === YOUR CODE HERE ===
     ctx.strokeStyle = "black";
     ctx.fillStyle = this.color;
-
-    //circles
-    //inner
-    // ctx.beginPath();
-    // ctx.arc(
-    //   this.centerX,
-    //   this.centerY,
-    //   Reticle.RETICLE_INNER_DIAM / 2,
-    //   0,
-    //   2 * Math.PI,
-    //   false
-    // );
-    // ctx.fill();
-    // ctx.stroke();
-    //outer
     ctx.beginPath();
     ctx.arc(
       this.centerX,
@@ -960,9 +952,12 @@ class Reticle extends Target {
   // by starting the trial timer and moving to the 'in_trial' state.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    if (this.parentUI.currentState === "begin_trial") {
+    if (
+      this.visible &&
+      this.pickedBy(ptX, ptY) &&
+      this.parentUI.currentState === "begin_trial"
+    ) {
       this.parentUI.configure("in_trial");
-      console.log("in_trial");
       return true;
     } else {
       return false;
@@ -1069,7 +1064,6 @@ class BackgroundDisplay extends ScreenObject {
     // === YOUR CODE HERE ===
     if (this.parentUI.currentState === "start") {
       this.parentUI.configure("begin_trial");
-      console.log("begin_trial");
       return true;
     } else {
       return false;
