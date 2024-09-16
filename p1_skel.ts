@@ -819,9 +819,14 @@ class Target extends ScreenObject {
   // and starting a new one.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-
+    if (this.parentUI.currentState === "in_trial") {
+      this.parentUI.newTrial();
+      return true;
+    } else {
+      return false;
+    }
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-    return false;
+    // return false;
     // === END OF CODE TO BE REMOVED ===
   }
 }
@@ -886,7 +891,7 @@ class Reticle extends Target {
   // by starting the trial timer and moving to the 'in_trial' state.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-
+    this.parentUI.configure();
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
     return false;
     // === END OF CODE TO BE REMOVED ===
