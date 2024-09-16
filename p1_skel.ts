@@ -757,7 +757,13 @@ class Target extends ScreenObject {
   // If the diameter is supplied, both the width and height are set to that value.
   newGeom(newCentX: number, newCentY: number, newDiam?: number) {
     // === YOUR CODE HERE ===
-
+    if (newDiam === undefined) {
+      this.diam = this.diam;
+    } else {
+      this.diam = newDiam;
+    }
+    this.centerX = newCentX;
+    this.centerY = newCentY;
     this.declareDamaged();
   }
 
@@ -782,6 +788,12 @@ class Target extends ScreenObject {
   // Draw the object as a filled and outlined circle
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this._x, this._y, this.radius, 0, 0, false);
+    ctx.stroke();
+    ctx.fill();
   }
 
   // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
@@ -789,9 +801,14 @@ class Target extends ScreenObject {
   // Pick function.  We only pick within our circle, not the entire bounding box
   override pickedBy(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-
+    return (
+      this.radius >=
+      Math.sqrt(
+        Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)
+      )
+    );
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-    return false;
+    // return false;
     // === END OF CODE TO BE REMOVED ===
   }
 
