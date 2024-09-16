@@ -871,6 +871,39 @@ class Reticle extends Target {
   // circle that indicates the active clickable region of the object.
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = this.color;
+
+    //circles
+    //inner
+    ctx.beginPath();
+    ctx.arc(
+      this.centerX,
+      this.centerY,
+      Reticle.RETICLE_INNER_DIAM / 2,
+      0,
+      0,
+      false
+    );
+    ctx.stroke();
+    ctx.fill();
+    //outer
+    ctx.beginPath();
+    ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_DIAM / 2, 0, 0, false);
+    ctx.stroke();
+    ctx.fill();
+
+    //cross
+    //vertical
+    ctx.beginPath();
+    ctx.moveTo(this.centerX, this.centerY + Reticle.RETICLE_INNER_DIAM / 2);
+    ctx.lineTo(this.centerX, this.centerY - Reticle.RETICLE_INNER_DIAM / 2);
+    ctx.stroke();
+    //horizontal
+    ctx.beginPath();
+    ctx.moveTo(this.centerX - Reticle.RETICLE_INNER_DIAM / 2, this.centerY);
+    ctx.lineTo(this.centerX + Reticle.RETICLE_INNER_DIAM / 2, this.centerY);
+    ctx.stroke();
   }
 
   // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
