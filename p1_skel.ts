@@ -911,9 +911,15 @@ class Reticle extends Target {
   // Picking function. We are only picked within our small center region.
   override pickedBy(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
+    return (
+      Reticle.RETICLE_INNER_DIAM / 2 >=
+      Math.sqrt(
+        Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)
+      )
+    );
 
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-    return false;
+    // return false;
     // === END OF CODE TO BE REMOVED ===
   }
 
