@@ -930,9 +930,14 @@ class Reticle extends Target {
   // by starting the trial timer and moving to the 'in_trial' state.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    this.parentUI.configure();
+    if (this.parentUI.currentState === "begin_trial") {
+      this.parentUI.configure("in_trial");
+      return true;
+    } else {
+      return false;
+    }
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-    return false;
+    // return false;
     // === END OF CODE TO BE REMOVED ===
   }
 }
