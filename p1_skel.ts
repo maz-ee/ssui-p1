@@ -600,11 +600,14 @@ class FittsTestUI extends UIClass {
         // a bit more left to do...
         // === YOUR CODE HERE ===
         this.theTarget.visible = false;
+        console.log("start");
 
         break;
       case "begin_trial":
         // === YOUR CODE HERE ===
         this.theBackground.msg1 = "Trial #" + this.trialCount + " of 10";
+        this.theBackground.msg2 = "";
+        this.theBackground.msg3 = "";
         this.theReticle.visible = true;
         this.theTarget.visible = false;
       case "in_trial":
@@ -795,7 +798,6 @@ class Target extends ScreenObject {
   // Draw the object as a filled and outlined circle
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
-    console.log("here");
     ctx.beginPath();
     ctx.arc(this._x, this._y, this.radius, 0, 2 * Math.PI, false);
     ctx.strokeStyle = "black";
@@ -958,9 +960,9 @@ class Reticle extends Target {
   // by starting the trial timer and moving to the 'in_trial' state.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    console.log("here");
     if (this.parentUI.currentState === "begin_trial") {
       this.parentUI.configure("in_trial");
+      console.log("in_trial");
       return true;
     } else {
       return false;
@@ -1049,10 +1051,12 @@ class BackgroundDisplay extends ScreenObject {
     if (this._msg1) {
       ctx.fillText(this._msg1, xpos, ypos);
       ypos = ypos + leading + fontHeight;
-    } else if (this._msg2) {
+    }
+    if (this._msg2) {
       ctx.fillText(this._msg2, xpos, ypos);
       ypos = ypos + leading + fontHeight;
-    } else if (this._msg3) {
+    }
+    if (this._msg3) {
       ctx.fillText(this._msg3, xpos, ypos);
     }
   }
@@ -1063,9 +1067,9 @@ class BackgroundDisplay extends ScreenObject {
   // in which case we respond to this input by starting a new trial
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    console.log("here");
     if (this.parentUI.currentState === "start") {
       this.parentUI.configure("begin_trial");
+      console.log("begin_trial");
       return true;
     } else {
       return false;
