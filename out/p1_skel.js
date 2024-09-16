@@ -454,19 +454,25 @@ class FittsTestUI extends UIClass {
                     "  For each trial click the center of the blue target to begin";
                 this.theBackground.msg3 =
                     "  Then click inside the green circle that appears";
-                this.theReticle.visible = false;
+                this.theReticle.visible = true;
                 // a bit more left to do...
                 // === YOUR CODE HERE ===
                 this.theTarget.visible = false;
                 break;
             case "begin_trial":
                 // === YOUR CODE HERE ===
-                break;
+                this.theBackground.msg1 = "Trial #" + this.trialCount + " of 10";
+                this.theReticle.visible = true;
+                this.theTarget.visible = false;
             case "in_trial":
                 // === YOUR CODE HERE ===
+                this.theReticle.visible = false;
+                this.theTarget.visible = true;
                 break;
             case "ended":
                 // === YOUR CODE HERE ===
+                this.theReticle.visible = false;
+                this.theTarget.visible = false;
                 // produce a dump of our data records on the console
                 this.presentData();
                 break;
@@ -489,6 +495,9 @@ class FittsTestUI extends UIClass {
             // make new random locations for reticle and target
             const { retX: retX, retY: retY, targX: targX, targY: targY, targD: targDiam, } = pickLocationsAndSize(this.canvas.width, this.canvas.height);
             // === YOUR CODE HERE ===
+            this.configure("begin_trial");
+            this.needsRedraw = true;
+            this.redraw();
         }
     }
     get trialData() {
@@ -558,6 +567,15 @@ class Target extends ScreenObject {
     // If the diameter is supplied, both the width and height are set to that value.
     newGeom(newCentX, newCentY, newDiam) {
         // === YOUR CODE HERE ===
+        if (newDiam === undefined) {
+            this.diam = this.diam;
+        }
+        else {
+            this.diam = newDiam;
+        }
+        this.centerX = newCentX;
+        this.centerY = newCentY;
+        // their code
         this.declareDamaged();
     }
     get color() {
@@ -576,13 +594,22 @@ class Target extends ScreenObject {
     // Draw the object as a filled and outlined circle
     draw(ctx) {
         // === YOUR CODE HERE ===
+        console.log("here");
+        ctx.beginPath();
+        ctx.arc(this._x, this._y, this.radius, 0, 2 * Math.PI, false);
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.stroke();
     }
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
     // Pick function.  We only pick within our circle, not the entire bounding box
     pickedBy(ptX, ptY) {
         // === YOUR CODE HERE ===
+        return (this.radius >=
+            Math.sqrt(Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-        return false;
+        // return false;
         // === END OF CODE TO BE REMOVED ===
     }
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
@@ -591,8 +618,16 @@ class Target extends ScreenObject {
     // and starting a new one.
     handleClickAt(ptX, ptY) {
         // === YOUR CODE HERE ===
+        console.log("clicked!");
+        if (this.parentUI.currentState === "in_trial") {
+            this.parentUI.newTrial();
+            return true;
+        }
+        else {
+            return false;
+        }
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-        return false;
+        // return false;
         // === END OF CODE TO BE REMOVED ===
     }
 }
@@ -620,13 +655,50 @@ class Reticle extends Target {
     // circle that indicates the active clickable region of the object.
     draw(ctx) {
         // === YOUR CODE HERE ===
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = this.color;
+        //circles
+        //inner
+        // ctx.beginPath();
+        // ctx.arc(
+        //   this.centerX,
+        //   this.centerY,
+        //   Reticle.RETICLE_INNER_DIAM / 2,
+        //   0,
+        //   2 * Math.PI,
+        //   false
+        // );
+        // ctx.fill();
+        // ctx.stroke();
+        //outer
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_DIAM / 2, 0, 2 * Math.PI, false);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_INNER_DIAM / 2, 0, 2 * Math.PI, false);
+        ctx.fill();
+        ctx.stroke();
+        //cross
+        //vertical
+        ctx.beginPath();
+        ctx.moveTo(this.centerX, this.centerY + Reticle.RETICLE_DIAM / 2);
+        ctx.lineTo(this.centerX, this.centerY - Reticle.RETICLE_DIAM / 2);
+        ctx.stroke();
+        //horizontal
+        ctx.beginPath();
+        ctx.moveTo(this.centerX - Reticle.RETICLE_DIAM / 2, this.centerY);
+        ctx.lineTo(this.centerX + Reticle.RETICLE_DIAM / 2, this.centerY);
+        ctx.stroke();
     }
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
     // Picking function. We are only picked within our small center region.
     pickedBy(ptX, ptY) {
         // === YOUR CODE HERE ===
+        return (Reticle.RETICLE_INNER_DIAM / 2 >=
+            Math.sqrt(Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-        return false;
+        // return false;
         // === END OF CODE TO BE REMOVED ===
     }
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
@@ -635,8 +707,16 @@ class Reticle extends Target {
     // by starting the trial timer and moving to the 'in_trial' state.
     handleClickAt(ptX, ptY) {
         // === YOUR CODE HERE ===
+        console.log("here");
+        if (this.parentUI.currentState === "begin_trial") {
+            this.parentUI.configure("in_trial");
+            return true;
+        }
+        else {
+            return false;
+        }
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-        return false;
+        // return false;
         // === END OF CODE TO BE REMOVED ===
     }
 }
@@ -707,11 +787,11 @@ class BackgroundDisplay extends ScreenObject {
             ctx.fillText(this._msg1, xpos, ypos);
             ypos = ypos + leading + fontHeight;
         }
-        if (this._msg2) {
+        else if (this._msg2) {
             ctx.fillText(this._msg2, xpos, ypos);
             ypos = ypos + leading + fontHeight;
         }
-        if (this._msg3) {
+        else if (this._msg3) {
             ctx.fillText(this._msg3, xpos, ypos);
         }
     }
@@ -720,8 +800,16 @@ class BackgroundDisplay extends ScreenObject {
     // in which case we respond to this input by starting a new trial
     handleClickAt(ptX, ptY) {
         // === YOUR CODE HERE ===
+        console.log("here");
+        if (this.parentUI.currentState === "start") {
+            this.parentUI.configure("begin_trial");
+            return true;
+        }
+        else {
+            return false;
+        }
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
-        return false;
+        // return false;
         // === END OF CODE TO BE REMOVED ===
     }
 }

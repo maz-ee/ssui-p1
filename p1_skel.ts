@@ -595,11 +595,11 @@ class FittsTestUI extends UIClass {
           "  For each trial click the center of the blue target to begin";
         this.theBackground.msg3 =
           "  Then click inside the green circle that appears";
-        this.theReticle.visible = false;
+        this.theReticle.visible = true;
 
         // a bit more left to do...
         // === YOUR CODE HERE ===
-        this.theTarget.visible = true;
+        this.theTarget.visible = false;
 
         break;
       case "begin_trial":
@@ -657,6 +657,8 @@ class FittsTestUI extends UIClass {
 
       // === YOUR CODE HERE ===
       this.configure("begin_trial");
+      this.needsRedraw = true;
+      this.redraw();
     }
   }
 
@@ -768,6 +770,7 @@ class Target extends ScreenObject {
     }
     this.centerX = newCentX;
     this.centerY = newCentY;
+    // their code
     this.declareDamaged();
   }
 
@@ -793,10 +796,10 @@ class Target extends ScreenObject {
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
     console.log("here");
-    ctx.strokeStyle = "black";
-    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this._x, this._y, this.radius, 0, 2 * Math.PI, false);
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = this.color;
     ctx.fill();
     ctx.stroke();
   }
@@ -882,17 +885,17 @@ class Reticle extends Target {
 
     //circles
     //inner
-    ctx.beginPath();
-    ctx.arc(
-      this.centerX,
-      this.centerY,
-      Reticle.RETICLE_INNER_DIAM / 2,
-      0,
-      2 * Math.PI,
-      false
-    );
-    ctx.stroke();
-    ctx.fill();
+    // ctx.beginPath();
+    // ctx.arc(
+    //   this.centerX,
+    //   this.centerY,
+    //   Reticle.RETICLE_INNER_DIAM / 2,
+    //   0,
+    //   2 * Math.PI,
+    //   false
+    // );
+    // ctx.fill();
+    // ctx.stroke();
     //outer
     ctx.beginPath();
     ctx.arc(
@@ -903,19 +906,31 @@ class Reticle extends Target {
       2 * Math.PI,
       false
     );
-    ctx.stroke();
     ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(
+      this.centerX,
+      this.centerY,
+      Reticle.RETICLE_INNER_DIAM / 2,
+      0,
+      2 * Math.PI,
+      false
+    );
+    ctx.fill();
+    ctx.stroke();
 
     //cross
     //vertical
     ctx.beginPath();
-    ctx.moveTo(this.centerX, this.centerY + Reticle.RETICLE_INNER_DIAM / 2);
-    ctx.lineTo(this.centerX, this.centerY - Reticle.RETICLE_INNER_DIAM / 2);
+    ctx.moveTo(this.centerX, this.centerY + Reticle.RETICLE_DIAM / 2);
+    ctx.lineTo(this.centerX, this.centerY - Reticle.RETICLE_DIAM / 2);
     ctx.stroke();
     //horizontal
     ctx.beginPath();
-    ctx.moveTo(this.centerX - Reticle.RETICLE_INNER_DIAM / 2, this.centerY);
-    ctx.lineTo(this.centerX + Reticle.RETICLE_INNER_DIAM / 2, this.centerY);
+    ctx.moveTo(this.centerX - Reticle.RETICLE_DIAM / 2, this.centerY);
+    ctx.lineTo(this.centerX + Reticle.RETICLE_DIAM / 2, this.centerY);
     ctx.stroke();
   }
 
@@ -943,6 +958,7 @@ class Reticle extends Target {
   // by starting the trial timer and moving to the 'in_trial' state.
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
+    console.log("here");
     if (this.parentUI.currentState === "begin_trial") {
       this.parentUI.configure("in_trial");
       return true;
@@ -1047,8 +1063,13 @@ class BackgroundDisplay extends ScreenObject {
   // in which case we respond to this input by starting a new trial
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
-    this.parentUI.configure("begin_trial");
-    return true;
+    console.log("here");
+    if (this.parentUI.currentState === "start") {
+      this.parentUI.configure("begin_trial");
+      return true;
+    } else {
+      return false;
+    }
     // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
     // return false;
     // === END OF CODE TO BE REMOVED ===
