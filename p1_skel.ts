@@ -595,13 +595,12 @@ class FittsTestUI extends UIClass {
           "  For each trial click the center of the blue target to begin";
         this.theBackground.msg3 =
           "  Then click inside the green circle that appears";
-        this.theReticle.visible = true;
+        this.theReticle.visible = false;
 
         // a bit more left to do...
         // === YOUR CODE HERE ===
         this.theTarget.visible = false;
         console.log("start");
-
         break;
       case "begin_trial":
         // === YOUR CODE HERE ===
@@ -614,12 +613,14 @@ class FittsTestUI extends UIClass {
         break;
       case "in_trial":
         // === YOUR CODE HERE ===
+        this.theBackground.msg1 = "";
         this.theReticle.visible = false;
         this.theTarget.visible = true;
         console.log("in_trial");
         break;
       case "ended":
         // === YOUR CODE HERE ===
+        this.theBackground.msg1 = "Done! Refresh the page to start again.";
         this.theReticle.visible = false;
         this.theTarget.visible = false;
 
@@ -661,6 +662,7 @@ class FittsTestUI extends UIClass {
       } = pickLocationsAndSize(this.canvas.width, this.canvas.height);
 
       // === YOUR CODE HERE ===
+      this.startTrial(retX, retY);
       this.theTarget.newGeom(targX, targY, targDiam);
       this.theReticle.newGeom(retX, retY);
       this.needsRedraw = true;
@@ -721,9 +723,9 @@ class FittsTestUI extends UIClass {
   // Present the data we have collected after a set of trials completes.
   // This currently just prints the data to the console in a CSV format.
   presentData() {
-    // console.log("Data dump...");
+    console.log("Data dump...");
     for (let i = 0; i < this.trialData.length; i++) {
-      // console.log("" + i + ":" + this.trialData[i].toString());
+      console.log("" + i + ":" + this.trialData[i].toString());
       console.log(this.trialData[i].toString());
     }
   }
@@ -802,8 +804,11 @@ class Target extends ScreenObject {
   // Draw the object as a filled and outlined circle
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
+    if (!this.visible) {
+      return;
+    }
     ctx.beginPath();
-    ctx.arc(this._x, this._y, this.radius, 0, 2 * Math.PI, false);
+    ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI, false);
     ctx.strokeStyle = "black";
     ctx.fillStyle = this.color;
     ctx.fill();
@@ -838,6 +843,7 @@ class Target extends ScreenObject {
       this.pickedBy(ptX, ptY) &&
       this.parentUI.currentState === "in_trial"
     ) {
+      this.parentUI.recordTrialEnd(ptX, ptY, this.diam);
       this.parentUI.newTrial();
       return true;
     } else {
@@ -889,6 +895,9 @@ class Reticle extends Target {
   // circle that indicates the active clickable region of the object.
   override draw(ctx: CanvasRenderingContext2D): void {
     // === YOUR CODE HERE ===
+    if (!this.visible) {
+      return;
+    }
     ctx.strokeStyle = "black";
     ctx.fillStyle = this.color;
     ctx.beginPath();
@@ -1063,7 +1072,7 @@ class BackgroundDisplay extends ScreenObject {
   override handleClickAt(ptX: number, ptY: number): boolean {
     // === YOUR CODE HERE ===
     if (this.parentUI.currentState === "start") {
-      this.parentUI.configure("begin_trial");
+      this.parentUI.newTrial();
       return true;
     } else {
       return false;
@@ -1073,5 +1082,3 @@ class BackgroundDisplay extends ScreenObject {
     // === END OF CODE TO BE REMOVED ===
   }
 }
-
-// . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . .
