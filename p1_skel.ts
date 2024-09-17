@@ -600,7 +600,7 @@ class FittsTestUI extends UIClass {
         // a bit more left to do...
         // === YOUR CODE HERE ===
         this.theTarget.visible = false;
-        console.log("start");
+        // console.log("start");
         break;
       case "begin_trial":
         // === YOUR CODE HERE ===
@@ -609,14 +609,14 @@ class FittsTestUI extends UIClass {
         this.theBackground.msg3 = "";
         this.theReticle.visible = true;
         this.theTarget.visible = false;
-        console.log("begin_trial");
+        // console.log("begin_trial");
         break;
       case "in_trial":
         // === YOUR CODE HERE ===
         this.theBackground.msg1 = "";
         this.theReticle.visible = false;
         this.theTarget.visible = true;
-        console.log("in_trial");
+        // console.log("in_trial");
         break;
       case "ended":
         // === YOUR CODE HERE ===
@@ -662,7 +662,7 @@ class FittsTestUI extends UIClass {
       } = pickLocationsAndSize(this.canvas.width, this.canvas.height);
 
       // === YOUR CODE HERE ===
-      this.startTrial(retX, retY);
+      this.startTrial(retX, retY); //record trial time
       this.theTarget.newGeom(targX, targY, targDiam);
       this.theReticle.newGeom(retX, retY);
       this.needsRedraw = true;
@@ -823,6 +823,7 @@ class Target extends ScreenObject {
     return (
       this.radius >=
       Math.sqrt(
+        //distance clicked from center
         Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)
       )
     );
@@ -898,6 +899,8 @@ class Reticle extends Target {
     if (!this.visible) {
       return;
     }
+
+    // big circle
     ctx.strokeStyle = "black";
     ctx.fillStyle = this.color;
     ctx.beginPath();
@@ -912,6 +915,7 @@ class Reticle extends Target {
     ctx.fill();
     ctx.stroke();
 
+    // inside circle
     ctx.beginPath();
     ctx.arc(
       this.centerX,
@@ -945,6 +949,7 @@ class Reticle extends Target {
     return (
       Reticle.RETICLE_INNER_DIAM / 2 >=
       Math.sqrt(
+        // dist clicked from radius
         Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)
       )
     );
