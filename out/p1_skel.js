@@ -1,4 +1,5 @@
 "use strict";
+//GIT: https://github.com/maz-ee/ssui-p1
 //=====================================================================
 //=====================================================================
 // Skeleton Code for:
@@ -458,7 +459,7 @@ class FittsTestUI extends UIClass {
                 // a bit more left to do...
                 // === YOUR CODE HERE ===
                 this.theTarget.visible = false;
-                console.log("start");
+                // console.log("start");
                 break;
             case "begin_trial":
                 // === YOUR CODE HERE ===
@@ -467,14 +468,14 @@ class FittsTestUI extends UIClass {
                 this.theBackground.msg3 = "";
                 this.theReticle.visible = true;
                 this.theTarget.visible = false;
-                console.log("begin_trial");
+                // console.log("begin_trial");
                 break;
             case "in_trial":
                 // === YOUR CODE HERE ===
                 this.theBackground.msg1 = "";
                 this.theReticle.visible = false;
                 this.theTarget.visible = true;
-                console.log("in_trial");
+                // console.log("in_trial");
                 break;
             case "ended":
                 // === YOUR CODE HERE ===
@@ -503,7 +504,7 @@ class FittsTestUI extends UIClass {
             // make new random locations for reticle and target
             const { retX: retX, retY: retY, targX: targX, targY: targY, targD: targDiam, } = pickLocationsAndSize(this.canvas.width, this.canvas.height);
             // === YOUR CODE HERE ===
-            this.startTrial(retX, retY);
+            this.startTrial(retX, retY); //record trial time
             this.theTarget.newGeom(targX, targY, targDiam);
             this.theReticle.newGeom(retX, retY);
             this.needsRedraw = true;
@@ -620,7 +621,9 @@ class Target extends ScreenObject {
     pickedBy(ptX, ptY) {
         // === YOUR CODE HERE ===
         return (this.radius >=
-            Math.sqrt(Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
+            Math.sqrt(
+            //distance clicked from center
+            Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
         // return false;
         // === END OF CODE TO BE REMOVED ===
@@ -673,12 +676,14 @@ class Reticle extends Target {
         if (!this.visible) {
             return;
         }
+        // big circle
         ctx.strokeStyle = "black";
         ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_DIAM / 2, 0, 2 * Math.PI, false);
         ctx.fill();
         ctx.stroke();
+        // inside circle
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, Reticle.RETICLE_INNER_DIAM / 2, 0, 2 * Math.PI, false);
         ctx.fill();
@@ -700,7 +705,9 @@ class Reticle extends Target {
     pickedBy(ptX, ptY) {
         // === YOUR CODE HERE ===
         return (Reticle.RETICLE_INNER_DIAM / 2 >=
-            Math.sqrt(Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
+            Math.sqrt(
+            // dist clicked from radius
+            Math.pow(this.centerX - ptX, 2) + Math.pow(this.centerY - ptY, 2)));
         // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
         // return false;
         // === END OF CODE TO BE REMOVED ===
